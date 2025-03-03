@@ -127,7 +127,7 @@ class ChromaApiClient
     public function getTenant(string $tenant): ?Tenant
     {
         try {
-            $response = $this->httpClient->get("/api/v1/tenants/$tenant");
+            $response = $this->httpClient->get("/api/v2/tenants/$tenant");
 
             $result = json_decode($response->getBody()->getContents(), true);
 
