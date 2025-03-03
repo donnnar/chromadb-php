@@ -200,9 +200,7 @@ class ChromaApiClient
     public function add(string $collectionId, AddEmbeddingRequest $request): void
     {
         try {
-            $this->httpClient->post("/api/v2/collections/$collectionId/add", [
-                'json' => $request->toArray(),
-            ]);
+            $this->httpClient->post("/api/v2/collections/$collectionId/add", $request->toArray());
         } catch (ClientExceptionInterface $e) {
             $this->handleChromaApiException($e);
         }
