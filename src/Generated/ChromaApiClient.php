@@ -35,8 +35,7 @@ class ChromaApiClient
 
     public function __construct(
         public readonly Client $httpClient,
-    )
-    {
+    ) {
     }
 
     public function root(): array
@@ -111,7 +110,7 @@ class ChromaApiClient
     {
         try {
             $this->httpClient->post('/api/v2/tenants', [
-                'json' => $request->toArray(),
+                'json' => $request->toArray()
             ]);
         } catch (ClientExceptionInterface $e) {
             $this->handleChromaApiException($e);
@@ -129,7 +128,6 @@ class ChromaApiClient
         } catch (ClientExceptionInterface $e) {
             $this->handleChromaApiException($e);
         }
-
     }
 
 
@@ -154,7 +152,6 @@ class ChromaApiClient
             $response = $this->httpClient->post("/api/v2/tenants/$tenant/databases/$database/collections", [
                 'json' => $request->toArray()
             ]);
-
         } catch (ClientExceptionInterface $e) {
             $this->handleChromaApiException($e);
         }
@@ -167,7 +164,9 @@ class ChromaApiClient
     public function getCollection(string $collectionId, string $database, string $tenant): Collection
     {
         try {
-            $response = $this->httpClient->get("/api/v2/tenants/$tenant/databases/$database/collections/$collectionId/get");
+            $response = $this->httpClient->get(
+                "/api/v2/tenants/$tenant/databases/$database/collections/$collectionId/get"
+            );
         } catch (ClientExceptionInterface $e) {
             $this->handleChromaApiException($e);
         }
@@ -181,7 +180,7 @@ class ChromaApiClient
     {
         try {
             $response = $this->httpClient->put("/api/v2/collections/$collectionId", [
-                'json' => $request->toArray(),
+                'json' => $request->toArray()
             ]);
         } catch (ClientExceptionInterface $e) {
             $this->handleChromaApiException($e);
@@ -197,9 +196,27 @@ class ChromaApiClient
         }
     }
 
+    public function addToCollection(
+        string $collectionId,
+        string $database,
+        string $tenant,
+        AddEmbeddingRequest $request
+    ): void {
+        try {
+            $this->httpClient->post("/api/v2/tenants/$tenant/databases/$database/collections/$collectionId/add", [
+                'json' => $request->toArray()
+            ]);
+        } catch (ClientExceptionInterface $e) {
+            $this->handleChromaApiException($e);
+        }
+    }
+
     public function add(string $collectionId, AddEmbeddingRequest $request): void
     {
         try {
+            // @todo veraltet!
+//            $options = $request->toArray();
+//            $this->httpClient->post("/api/v2/tenants/{tenant}/databases/{database_name}/collections/$collectionId/add", $options);
             $this->httpClient->post("/api/v2/collections/$collectionId/add", $request->toArray());
         } catch (ClientExceptionInterface $e) {
             $this->handleChromaApiException($e);
@@ -210,7 +227,7 @@ class ChromaApiClient
     {
         try {
             $this->httpClient->post("/api/v2/collections/$collectionId/update", [
-                'json' => $request->toArray(),
+                'json' => $request->toArray()
             ]);
         } catch (ClientExceptionInterface $e) {
             $this->handleChromaApiException($e);
@@ -221,7 +238,7 @@ class ChromaApiClient
     {
         try {
             $this->httpClient->post("/api/v2/collections/$collectionId/upsert", [
-                'json' => $request->toArray(),
+                'json' => $request->toArray()
             ]);
         } catch (ClientExceptionInterface $e) {
             $this->handleChromaApiException($e);
@@ -232,7 +249,7 @@ class ChromaApiClient
     {
         try {
             $response = $this->httpClient->post("/api/v2/collections/$collectionId/get", [
-                'json' => $request->toArray(),
+                'json' => $request->toArray()
             ]);
         } catch (ClientExceptionInterface $e) {
             $this->handleChromaApiException($e);
@@ -247,7 +264,7 @@ class ChromaApiClient
     {
         try {
             $this->httpClient->post("/api/v2/collections/$collectionId/delete", [
-                'json' => $request->toArray(),
+                'json' => $request->toArray()
             ]);
         } catch (ClientExceptionInterface $e) {
             $this->handleChromaApiException($e);
@@ -269,7 +286,7 @@ class ChromaApiClient
     {
         try {
             $response = $this->httpClient->post("/api/v2/collections/$collectionId/query", [
-                'json' => $request->toArray(),
+                'json' => $request->toArray()
             ]);
         } catch (ClientExceptionInterface $e) {
             $this->handleChromaApiException($e);
@@ -305,7 +322,7 @@ class ChromaApiClient
             $code = $context['errno'] ?? $e->getCode();
 
             if ($code === 404) {
-               throw new ChromaNotFoundException($e->getMessage(), $code);
+                throw new ChromaNotFoundException($e->getMessage(), $code);
             }
 
             $errorString = $e->getResponse()->getBody()->getContents();
@@ -317,12 +334,12 @@ class ChromaApiClient
             $error = json_decode($errorString, true);
 
             if ($error !== null) {
-
                 // If the structure is 'error' => 'NotFoundError("Collection not found")'
                 if (preg_match(
                     '/^(?P<error_type>\w+)\((?P<message>.*)\)$/',
                     $error['error'] ?? '',
-                    $matches)
+                    $matches
+                )
                 ) {
                     if (isset($matches['message'])) {
                         $error_type = $matches['error_type'] ?? 'UnknownError';
