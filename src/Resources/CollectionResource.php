@@ -109,7 +109,7 @@ class CollectionResource
         );
 
 
-        $this->apiClient->add($this->id, $request);
+        $this->apiClient->addToCollection($this->id, $this->database, $this->tenant, $request);
     }
 
 
