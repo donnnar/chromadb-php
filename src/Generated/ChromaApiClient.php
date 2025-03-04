@@ -217,7 +217,9 @@ class ChromaApiClient
             // @todo veraltet!
 //            $options = $request->toArray();
 //            $this->httpClient->post("/api/v2/tenants/{tenant}/databases/{database_name}/collections/$collectionId/add", $options);
-            $this->httpClient->post("/api/v2/collections/$collectionId/add", $request->toArray());
+            $this->httpClient->post("/api/v2/collections/$collectionId/add", [
+                'json' => $request->toArray()
+            ]);
         } catch (ClientExceptionInterface $e) {
             $this->handleChromaApiException($e);
         }
