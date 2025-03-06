@@ -287,9 +287,14 @@ class ChromaApiClient
     public function getNearestNeighbors(string $collectionId, QueryEmbeddingRequest $request): QueryItemsResponse
     {
         try {
-            $response = $this->httpClient->post("/api/v2/collections/$collectionId/query", [
+            $response = $this->httpClient->post("/api/v1/collections/$collectionId/query", [
                 'json' => $request->toArray()
             ]);
+
+            // @todo v2 implementieren
+//            $response = $this->httpClient->post("/api/v2/tenants/$tenant/databases/$database/collections/$collectionId/query", [
+//                'json' => $request->toArray()
+//            ]);
         } catch (ClientExceptionInterface $e) {
             $this->handleChromaApiException($e);
         }
