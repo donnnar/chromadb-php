@@ -7,6 +7,7 @@ namespace Codewithkyrian\ChromaDB\Resources;
 
 use Codewithkyrian\ChromaDB\Embeddings\EmbeddingFunction;
 use Codewithkyrian\ChromaDB\Generated\ChromaApiClient;
+use Codewithkyrian\ChromaDB\Generated\Exceptions\UniqueIdsException;
 use Codewithkyrian\ChromaDB\Generated\Models\Collection;
 use Codewithkyrian\ChromaDB\Generated\Requests\AddEmbeddingRequest;
 use Codewithkyrian\ChromaDB\Generated\Requests\DeleteEmbeddingRequest;
@@ -404,7 +405,7 @@ class CollectionResource
             $duplicateIds = array_filter($ids, function ($id) use ($ids) {
                 return count(array_keys($ids, $id)) > 1;
             });
-            throw new \InvalidArgumentException('Expected IDs to be unique, found duplicates for: ' . implode(', ', $duplicateIds));
+            throw new UniqueIdsException('Expected IDs to be unique, found duplicates for: ' . implode(', ', $duplicateIds));
         }
 
 
