@@ -6,4 +6,5 @@ namespace Codewithkyrian\ChromaDB\Generated\Exceptions;
 
 class UniqueIdsException extends \InvalidArgumentException
 {
+    
 }
