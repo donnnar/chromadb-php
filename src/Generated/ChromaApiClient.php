@@ -176,6 +176,19 @@ class ChromaApiClient
         return Collection::make($result);
     }
 
+    public function getCollectionWithouGet(string $collectionId, string $database, string $tenant): array
+    {
+        try {
+            $response = $this->httpClient->get(
+                "/api/v2/tenants/$tenant/databases/$database/collections/$collectionId"
+            );
+        } catch (ClientExceptionInterface $e) {
+            $this->handleChromaApiException($e);
+        }
+
+        return json_decode($response->getBody()->getContents(), true);
+    }
+
     public function updateCollection(string $collectionId, UpdateCollectionRequest $request): void
     {
         try {
@@ -196,6 +209,23 @@ class ChromaApiClient
         }
     }
 
+    public function deleteCollectionEntry(string $collectionId, string $database, string $tenant, DeleteEmbeddingRequest $request): void
+    {
+        try {
+            $this->httpClient->delete("/api/v2/tenants/$tenant/databases/$database/collections/$collectionId/delete", [
+                'json' => $request->toArray()
+            ]);
+        } catch (ClientExceptionInterface $e) {
+            $this->handleChromaApiException($e);
+        }
+    }
+
+    /**
+     * Diese Funktion zum Adden benutzen
+     * @throws ChromaConnectionException
+     * @throws ChromaException
+     * @throws ChromaNotFoundException
+     */
     public function addToCollection(
         string $collectionId,
         string $database,
@@ -211,13 +241,19 @@ class ChromaApiClient
         }
     }
 
+    /**
+     * @deprecated, da V1
+     * @param string $collectionId
+     * @param AddEmbeddingRequest $request
+     * @return void
+     * @throws ChromaConnectionException
+     * @throws ChromaException
+     * @throws ChromaNotFoundException
+     */
     public function add(string $collectionId, AddEmbeddingRequest $request): void
     {
         try {
-            // @todo veraltet!
-//            $options = $request->toArray();
-//            $this->httpClient->post("/api/v2/tenants/{tenant}/databases/{database_name}/collections/$collectionId/add", $options);
-            $this->httpClient->post("/api/v2/collections/$collectionId/add", [
+            $this->httpClient->post("/api/v1/collections/$collectionId/add", [
                 'json' => $request->toArray()
             ]);
         } catch (ClientExceptionInterface $e) {
@@ -273,10 +309,10 @@ class ChromaApiClient
         }
     }
 
-    public function count(string $collectionId): int
+    public function count(string $collectionId, string $database, string $tenant): int
     {
         try {
-            $response = $this->httpClient->get("/api/v2/collections/$collectionId/count");
+            $response = $this->httpClient->get("/api/v2/tenants/$tenant/databases/$database/collections/$collectionId/count");
         } catch (ClientExceptionInterface $e) {
             $this->handleChromaApiException($e);
         }
@@ -284,17 +320,13 @@ class ChromaApiClient
         return json_decode($response->getBody()->getContents(), true);
     }
 
-    public function getNearestNeighbors(string $collectionId, QueryEmbeddingRequest $request): QueryItemsResponse
+
+    public function getNearestNeighbors(string $collectionId, string $database, string $tenant, QueryEmbeddingRequest $request): QueryItemsResponse
     {
         try {
-            $response = $this->httpClient->post("/api/v1/collections/$collectionId/query", [
+            $response = $this->httpClient->post("/api/v2/tenants/$tenant/databases/$database/collections/$collectionId/query", [
                 'json' => $request->toArray()
             ]);
-
-            // @todo v2 implementieren
-//            $response = $this->httpClient->post("/api/v2/tenants/$tenant/databases/$database/collections/$collectionId/query", [
-//                'json' => $request->toArray()
-//            ]);
         } catch (ClientExceptionInterface $e) {
             $this->handleChromaApiException($e);
         }

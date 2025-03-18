@@ -324,7 +324,7 @@ class CollectionResource
             include: $include,
         );
 
-        return $this->apiClient->getNearestNeighbors($this->id, $request);
+        return $this->apiClient->getNearestNeighbors($this->id, $this->database, $this->tenant, $request);
 
     }
 
